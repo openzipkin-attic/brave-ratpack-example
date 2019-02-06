@@ -3,7 +3,7 @@ server:
 
 brave:
   # reporter options: noop, console or http.
-  reporter: console
+  reporter: http
   serviceName: example
 
   http:
