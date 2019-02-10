@@ -1,0 +1,10 @@
+server:
+  port: 5050
+
+brave:
+  # reporter options: noop, console or http.
+  reporter: http
+  serviceName: example
+
+  http:
+    url: 'http://localhost:9411/api/v2/spans'
