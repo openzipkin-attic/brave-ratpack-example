@@ -16,6 +16,7 @@ public class BraveConfig {
   public String getReporter() {
     return this.reporter;
   }
+
   public void setReporter(String reporter) {
     this.reporter = reporter;
   }
@@ -23,6 +24,7 @@ public class BraveConfig {
   public String getServiceName() {
     return this.serviceName;
   }
+
   public void setServiceName(String name) {
     this.serviceName = name;
   }
@@ -30,6 +32,7 @@ public class BraveConfig {
   public BraveHttpConfig getHttp() {
     return this.http;
   }
+
   public void setHttp(BraveHttpConfig http) {
     this.http = http;
   }
@@ -45,7 +48,7 @@ public class BraveConfig {
     if ("console".equals(reporter.toLowerCase())) {
       return Reporter.CONSOLE;
     } else if ("http".equals(reporter.toLowerCase())) {
-      return AsyncReporter.create(URLConnectionSender.create(this.http.getUrl()));
+      return AsyncReporter.create(URLConnectionSender.create(this.http.getEndpoint()));
     } else {
       return Reporter.NOOP;
     }

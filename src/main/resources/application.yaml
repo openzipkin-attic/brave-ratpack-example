@@ -7,4 +7,4 @@ brave:
   serviceName: example
 
   http:
-    url: 'http://localhost:9411/api/v2/spans'
+    endpoint: 'http://localhost:9411/api/v2/spans'
