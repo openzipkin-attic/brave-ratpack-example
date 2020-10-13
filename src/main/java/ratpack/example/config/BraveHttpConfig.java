@@ -2,14 +2,14 @@ package ratpack.example.config;
 
 public class BraveHttpConfig {
 
-  private String url;
+  private String endpoint;
 
-  public String getUrl() {
-    return this.url;
+  public String getEndpoint() {
+    return this.endpoint;
   }
 
-  public void setUrl(String url) {
-    this.url = url;
+  public void setEndpoint(String endpoint) {
+    this.endpoint = endpoint;
   }
 
 }

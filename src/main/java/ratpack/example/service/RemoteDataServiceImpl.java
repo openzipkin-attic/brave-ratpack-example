@@ -1,18 +1,15 @@
 package ratpack.example.service;
 
 import brave.ScopedSpan;
-import brave.Span;
-import brave.Tracer;
 import brave.http.HttpTracing;
-import ratpack.exec.Promise;
-import ratpack.http.client.HttpClient;
-import ratpack.zipkin.TracedParallelBatch;
-import ratpack.zipkin.Zipkin;
-
-import javax.inject.Inject;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import javax.inject.Inject;
+import ratpack.exec.Promise;
+import ratpack.exec.util.ParallelBatch;
+import ratpack.http.client.HttpClient;
+import ratpack.zipkin.Zipkin;
 
 public class RemoteDataServiceImpl implements RemoteDataService {
 
@@ -23,15 +20,9 @@ public class RemoteDataServiceImpl implements RemoteDataService {
   @Zipkin
   private HttpClient client;
 
-
   @Override
   public Promise<String> generate() throws Exception {
-    final Span local = httpTracing.tracing().tracer()
-      .nextSpan()
-      .name("remote generate")
-      .start();
-    final Tracer.SpanInScope ws = httpTracing.tracing().tracer()
-      .withSpanInScope(local);
+    ScopedSpan local = httpTracing.tracing().tracer().startScopedSpan("remote generate");
     return client.get(new URI("http://localhost:5050/generate"))
       .wiretap(result -> {
         if (result.isError()) {
@@ -41,7 +32,6 @@ public class RemoteDataServiceImpl implements RemoteDataService {
         }
         local.tag("test", "local test tag");
         local.finish();
-        ws.close();
       })
       .map(response -> response.getBody().getText());
   }
@@ -49,12 +39,9 @@ public class RemoteDataServiceImpl implements RemoteDataService {
   @Override
   public Promise<List<String>> generateMany(int count) throws Exception {
     List<Promise<String>> promises = new ArrayList<>();
-    for (int i=0; i<count; i++) {
+    for (int i = 0; i < count; i++) {
       promises.add(generate());
     }
-    return TracedParallelBatch.of(promises)
-      .withContext(httpTracing.tracing().currentTraceContext().get())
-      .yield();
+    return ParallelBatch.of(promises).yield();
   }
-
 }
